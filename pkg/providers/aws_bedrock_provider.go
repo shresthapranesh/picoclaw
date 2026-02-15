@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -15,19 +14,19 @@ import (
 )
 
 type AWSBedrockProvider struct {
-	command   string
 	workspace string
+	region    string
 }
 
-func NewAWSBedrockProvider(workspace string) *AWSBedrockProvider {
+func NewAWSBedrockProvider(workspace string, region string) *AWSBedrockProvider {
 	return &AWSBedrockProvider{
-		command:   "awsbedrock",
 		workspace: workspace,
+		region: region,
 	}
 }
 
 func (p *AWSBedrockProvider) Chat(ctx context.Context, messages []Message, tools []ToolDefinition, model string, options map[string]interface{}) (*LLMResponse, error) {
-	BedrockRuntimeClient, err := getBedrockRuntimeClient()
+	BedrockRuntimeClient, err := p.getBedrockRuntimeClient()
 	if err != nil {
 		return nil, err
 	}
@@ -218,10 +217,10 @@ func (p *AWSBedrockProvider) parseAWSBedrockResponse(response *bedrockruntime.Co
 	}, nil
 }
 
-func getBedrockRuntimeClient() (*bedrockruntime.Client, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+func (p *AWSBedrockProvider) getBedrockRuntimeClient() (*bedrockruntime.Client, error) {
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(p.region))
 	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
+		return nil, fmt.Errorf("failed to load config: %v", err)
 	}
 	client := bedrockruntime.NewFromConfig(cfg)
 	return client, nil

@@ -328,7 +328,7 @@ func CreateProvider(cfg *config.Config) (LLMProvider, error) {
 			if workspace == "" {
 				workspace = "."
 			}
-			return NewAWSBedrockProvider(workspace), nil
+			return NewAWSBedrockProvider(workspace, cfg.Providers.AWSBedrock.Region), nil
 		}
 
 	}

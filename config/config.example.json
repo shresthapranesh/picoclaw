@@ -109,8 +109,7 @@
       "api_base": ""
     },
     "aws_bedrock": {
-      "api_key": "",
-      "api_base": ""
+      "region": "us-west-1"
     }
   },
   "tools": {

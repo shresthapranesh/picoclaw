@@ -7,7 +7,7 @@ import (
 )
 
 func TestMessagesToConverseInput(t *testing.T) {
-	p := NewAWSBedrockProvider(".")
+	p := NewAWSBedrockProvider(".", "us-west-1")
 
 	tests := []struct {
 		name                 string

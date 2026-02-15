@@ -323,6 +323,12 @@ func CreateProvider(cfg *config.Config) (LLMProvider, error) {
 			}
 			return NewGitHubCopilotProvider(apiBase, cfg.Providers.GitHubCopilot.ConnectMode, model)
 
+		case "awsbedrock":
+			workspace := cfg.Agents.Defaults.Workspace
+			if workspace == "" {
+				workspace = "."
+			}
+			return NewAWSBedrockProvider(workspace), nil
 		}
 
 	}

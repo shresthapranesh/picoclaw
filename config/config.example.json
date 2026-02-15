@@ -107,6 +107,10 @@
     "moonshot": {
       "api_key": "sk-xxx",
       "api_base": ""
+    },
+    "aws_bedrock": {
+      "api_key": "",
+      "api_base": ""
     }
   },
   "tools": {

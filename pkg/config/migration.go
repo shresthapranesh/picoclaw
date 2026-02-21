@@ -324,6 +324,20 @@ func ConvertProvidersToModelList(cfg *Config) []ModelConfig {
 				}, true
 			},
 		},
+		{
+			providerNames: []string{"awsbedrock", "bedrock"},
+			protocol:      "awsbedrock",
+			buildConfig: func(p ProvidersConfig) (ModelConfig, bool) {
+				if p.AWSBedrock.Region == "" {
+					return ModelConfig{}, false
+				}
+				return ModelConfig{
+					ModelName: "awsbedrock",
+					Model:     "awsbedrock/anthropic.claude-haiku-4-5-20251001-v1:0",
+					Region:    p.AWSBedrock.Region,
+				}, true
+			},
+		},
 	}
 
 	// Process each provider migration
@@ -336,6 +350,7 @@ func ConvertProvidersToModelList(cfg *Config) []ModelConfig {
 		// Check if this is the user's configured provider
 		if slices.Contains(m.providerNames, userProvider) && userModel != "" {
 			// Use the user's configured model instead of default
+			mc.ModelName = userModel
 			mc.Model = buildModelWithProtocol(m.protocol, userModel)
 		} else if userProvider == "" && userModel != "" && !legacyModelNameApplied {
 			// Legacy config: no explicit provider field but model is specified

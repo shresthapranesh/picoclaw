@@ -168,6 +168,25 @@ func TestCreateProviderFromConfig_Antigravity(t *testing.T) {
 	}
 }
 
+func TestCreateProviderFromConfig_AWSBedrock(t *testing.T) {
+	cfg := &config.ModelConfig{
+		ModelName: "test-awsbedrock",
+		Model:     "awsbedrock/anthropic.claude-haiku-4-5-20251001-v1:0",
+		Region:    "us-west-2",
+	}
+
+	provider, modelID, err := CreateProviderFromConfig(cfg)
+	if err != nil {
+		t.Fatalf("CreateProviderFromConfig() error = %v", err)
+	}
+	if provider == nil {
+		t.Fatal("CreateProviderFromConfig() returned nil provider")
+	}
+	if modelID != "anthropic.claude-haiku-4-5-20251001-v1:0" {
+		t.Errorf("modelID = %q, want %q", modelID, "anthropic.claude-haiku-4-5-20251001-v1:0")
+	}
+}
+
 func TestCreateProviderFromConfig_ClaudeCLI(t *testing.T) {
 	cfg := &config.ModelConfig{
 		ModelName: "test-claude-cli",

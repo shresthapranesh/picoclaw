@@ -18,9 +18,10 @@ import (
 func CreateProvider(cfg *config.Config) (LLMProvider, string, error) {
 	model := cfg.Agents.Defaults.Model
 
-	// Ensure model_list is populated (should be done by LoadConfig, but handle edge cases)
-	if len(cfg.ModelList) == 0 && cfg.HasProvidersConfig() {
-		cfg.ModelList = config.ConvertProvidersToModelList(cfg)
+	// Ensure provider_config changes map into the list if they are missing
+	if cfg.HasProvidersConfig() {
+		converted := config.ConvertProvidersToModelList(cfg)
+		cfg.ModelList = append(cfg.ModelList, converted...)
 	}
 
 	// Must have model_list at this point

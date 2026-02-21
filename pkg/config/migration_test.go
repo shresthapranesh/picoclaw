@@ -63,6 +63,32 @@ func TestConvertProvidersToModelList_Anthropic(t *testing.T) {
 	}
 }
 
+func TestConvertProvidersToModelList_AWSBedrock(t *testing.T) {
+	cfg := &Config{
+		Providers: ProvidersConfig{
+			AWSBedrock: ProviderConfig{
+				Region: "us-east-1",
+			},
+		},
+	}
+
+	result := ConvertProvidersToModelList(cfg)
+
+	if len(result) != 1 {
+		t.Fatalf("len(result) = %d, want 1", len(result))
+	}
+
+	if result[0].ModelName != "awsbedrock" {
+		t.Errorf("ModelName = %q, want %q", result[0].ModelName, "awsbedrock")
+	}
+	if result[0].Model != "awsbedrock/anthropic.claude-haiku-4-5-20251001-v1:0" {
+		t.Errorf("Model = %q, want %q", result[0].Model, "awsbedrock/anthropic.claude-haiku-4-5-20251001-v1:0")
+	}
+	if result[0].Region != "us-east-1" {
+		t.Errorf("Region = %q, want %q", result[0].Region, "us-east-1")
+	}
+}
+
 func TestConvertProvidersToModelList_Multiple(t *testing.T) {
 	cfg := &Config{
 		Providers: ProvidersConfig{
@@ -131,14 +157,15 @@ func TestConvertProvidersToModelList_AllProviders(t *testing.T) {
 			GitHubCopilot: ProviderConfig{ConnectMode: "grpc"},
 			Antigravity:   ProviderConfig{AuthMethod: "oauth"},
 			Qwen:          ProviderConfig{APIKey: "key17"},
+			AWSBedrock:    ProviderConfig{Region: "us-west-2"},
 		},
 	}
 
 	result := ConvertProvidersToModelList(cfg)
 
-	// All 17 providers should be converted
-	if len(result) != 17 {
-		t.Errorf("len(result) = %d, want 17", len(result))
+	// All 18 providers should be converted
+	if len(result) != 18 {
+		t.Errorf("len(result) = %d, want 18", len(result))
 	}
 }
 
@@ -353,6 +380,7 @@ func TestConvertProvidersToModelList_ProviderNameAliases(t *testing.T) {
 		{"doubao", "volcengine/doubao-custom", ProviderConfig{APIKey: "key"}},
 		{"tongyi", "qwen/qwen-custom", ProviderConfig{APIKey: "key"}},
 		{"kimi", "moonshot/kimi-custom", ProviderConfig{APIKey: "key"}},
+		{"bedrock", "awsbedrock/us.anthropic.claude-sonnet-4-6", ProviderConfig{Region: "us-west-1"}},
 	}
 
 	for _, tt := range tests {
@@ -382,6 +410,8 @@ func TestConvertProvidersToModelList_ProviderNameAliases(t *testing.T) {
 				cfg.Providers.Qwen = tt.provider
 			case "kimi":
 				cfg.Providers.Moonshot = tt.provider
+			case "bedrock":
+				cfg.Providers.AWSBedrock = tt.provider
 			}
 
 			// Need to fix the model name in config

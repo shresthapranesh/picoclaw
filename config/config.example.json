@@ -196,6 +196,9 @@
     "volcengine": {
       "api_key": "",
       "api_base": ""
+    },
+    "aws_bedrock": {
+      "region": "us-west-1"
     }
   },
   "tools": {

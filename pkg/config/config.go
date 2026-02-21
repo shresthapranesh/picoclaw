@@ -324,6 +324,7 @@ type ProvidersConfig struct {
 	GitHubCopilot ProviderConfig       `json:"github_copilot"`
 	Antigravity   ProviderConfig       `json:"antigravity"`
 	Qwen          ProviderConfig       `json:"qwen"`
+	AWSBedrock    ProviderConfig       `json:"awsbedrock"`
 }
 
 // IsEmpty checks if all provider configs are empty (no API keys or API bases set)
@@ -345,7 +346,8 @@ func (p ProvidersConfig) IsEmpty() bool {
 		p.VolcEngine.APIKey == "" && p.VolcEngine.APIBase == "" &&
 		p.GitHubCopilot.APIKey == "" && p.GitHubCopilot.APIBase == "" &&
 		p.Antigravity.APIKey == "" && p.Antigravity.APIBase == "" &&
-		p.Qwen.APIKey == "" && p.Qwen.APIBase == ""
+		p.Qwen.APIKey == "" && p.Qwen.APIBase == "" &&
+		p.AWSBedrock.Region == ""
 }
 
 // MarshalJSON implements custom JSON marshaling for ProvidersConfig
@@ -364,6 +366,7 @@ type ProviderConfig struct {
 	Proxy       string `json:"proxy,omitempty"        env:"PICOCLAW_PROVIDERS_{{.Name}}_PROXY"`
 	AuthMethod  string `json:"auth_method,omitempty"  env:"PICOCLAW_PROVIDERS_{{.Name}}_AUTH_METHOD"`
 	ConnectMode string `json:"connect_mode,omitempty" env:"PICOCLAW_PROVIDERS_{{.Name}}_CONNECT_MODE"` // only for Github Copilot, `stdio` or `grpc`
+	Region      string `json:"region,omitempty"       env:"PICOCLAW_PROVIDERS_{{.Name}}_REGION"`            //only for AWS Bedrock
 }
 
 type OpenAIProviderConfig struct {
@@ -390,6 +393,7 @@ type ModelConfig struct {
 	AuthMethod  string `json:"auth_method,omitempty"`  // Authentication method: oauth, token
 	ConnectMode string `json:"connect_mode,omitempty"` // Connection mode: stdio, grpc
 	Workspace   string `json:"workspace,omitempty"`    // Workspace path for CLI-based providers
+	Region      string `json:"region,omitempty"`
 
 	// Optional optimizations
 	RPM            int    `json:"rpm,omitempty"`              // Requests per minute limit
@@ -636,7 +640,8 @@ func (c *Config) HasProvidersConfig() bool {
 		v.VolcEngine.APIKey != "" || v.VolcEngine.APIBase != "" ||
 		v.GitHubCopilot.APIKey != "" || v.GitHubCopilot.APIBase != "" ||
 		v.Antigravity.APIKey != "" || v.Antigravity.APIBase != "" ||
-		v.Qwen.APIKey != "" || v.Qwen.APIBase != ""
+		v.Qwen.APIKey != "" || v.Qwen.APIBase != "" ||
+		v.AWSBedrock.Region != ""
 }
 
 // ValidateModelList validates all ModelConfig entries in the model_list.

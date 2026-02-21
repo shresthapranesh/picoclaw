@@ -149,6 +149,13 @@ func CreateProviderFromConfig(cfg *config.ModelConfig) (LLMProvider, string, err
 			return nil, "", err
 		}
 		return provider, modelID, nil
+	
+	case "awsbedrock":
+		workspace := cfg.Workspace
+		if workspace == "" {
+			workspace = "."
+		}
+		return NewAWSBedrockProvider(workspace, cfg.Region), modelID, nil
 
 	default:
 		return nil, "", fmt.Errorf("unknown protocol %q in model %q", protocol, cfg.Model)

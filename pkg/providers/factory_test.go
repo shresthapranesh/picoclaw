@@ -46,6 +46,14 @@ func TestResolveProviderSelection(t *testing.T) {
 			wantProxy:   "http://127.0.0.1:7890",
 		},
 		{
+			name: "explicit awsbedrock provider routes to aws bedrock type",
+			setup: func(cfg *config.Config) {
+				cfg.Agents.Defaults.Provider = "awsbedrock"
+				cfg.Providers.AWSBedrock.Region = "us-east-1"
+			},
+			wantType: providerTypeAWSBedrock,
+		},
+		{
 			name: "explicit shengsuanyun provider uses defaults",
 			setup: func(cfg *config.Config) {
 				cfg.Agents.Defaults.Provider = "shengsuanyun"

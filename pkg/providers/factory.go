@@ -22,6 +22,7 @@ const (
 	providerTypeClaudeCLI
 	providerTypeCodexCLI
 	providerTypeGitHubCopilot
+	providerTypeAWSBedrock
 )
 
 type providerSelection struct {
@@ -32,6 +33,7 @@ type providerSelection struct {
 	model           string
 	workspace       string
 	connectMode     string
+	region          string
 	enableWebSearch bool
 }
 
@@ -180,6 +182,15 @@ func resolveProviderSelection(cfg *config.Config) (providerSelection, error) {
 				sel.apiBase = "localhost:4321"
 			}
 			sel.connectMode = cfg.Providers.GitHubCopilot.ConnectMode
+			return sel, nil
+		case "awsbedrock", "bedrock":
+			workspace := cfg.WorkspacePath()
+			if workspace == "" {
+				workspace = "."
+			}
+			sel.providerType = providerTypeAWSBedrock
+			sel.workspace = workspace
+			sel.region = cfg.Providers.AWSBedrock.Region
 			return sel, nil
 		}
 	}
